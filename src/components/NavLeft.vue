@@ -1,13 +1,10 @@
 <template>
     <div class="nav-left">
     <el-menu
-      default-active="1"
+      default-active="label"
       class="left-menu-vertical"
-      @open="handleOpen"
-      @select="handleSelect"
-      :router="true"
-      @close="handleClose">
-      <el-menu-item :index="item.index" v-for="(item, index) in label" :key="index">
+      :router="true">
+      <el-menu-item :index="item.path" v-for="(item, index) in label" :key="index">
         <i :class="item.icon"></i>
         <span slot="title">{{item.label}}</span>
       </el-menu-item>
@@ -26,15 +23,7 @@ export default {
     props: {
     },
     methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleSelect(index, indexPath) {
-          console.log(index, indexPath)
-      }
+
  
     }
 }

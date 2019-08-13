@@ -10,6 +10,11 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
+        path: "/",
+        name: "Label",
+        component: Label
+    },
+    {
       path: "/label",
       name: "Label",
       component: Label
