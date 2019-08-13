@@ -1,28 +1,42 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <fix-header></fix-header>
+    <el-row class="admin-main">
+        <el-col :span="4" class="">
+          <nav-left></nav-left>
+        </el-col>
+        <el-col :span="20">
+          <router-view></router-view>
+        </el-col>
+      </el-row>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import FixHeader from "@/components/FixHeader.vue";
+import NavLeft from "@/components/NavLeft.vue"
 export default {
   name: 'app',
-  components: {
-    HelloWorld
-  }
+  components: {FixHeader, NavLeft}
 }
 </script>
 
-<style>
+<style lang="scss">
+*{
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 100vw;
+  height: 100vh;
+  .admin-main{
+    height: calc(100vh - 60px);
+    padding-top: 60px;
+  }
 }
 </style>
