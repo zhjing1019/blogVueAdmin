@@ -21,14 +21,6 @@
             </el-form-item>
           </el-col>
         </template>
-        <!-- <el-col :span="12" v-if="isCarouselShow">
-          <upload-img :bannerId.sync="bannerId"></upload-img>
-        </el-col>
-        <el-col :span="12" v-if="isCarouselShow">
-          <el-form-item label="轮播图标题">
-            <el-input v-model="form.bannerTitle"></el-input>
-          </el-form-item>
-        </el-col> -->
         <el-col :span="24">
           <div class="partyjx-editor">
             <quill-editor
@@ -43,11 +35,6 @@
             </quill-editor>
           </div>
         </el-col>
-        <!-- <el-col :span="24" v-if="uploadFile">
-          <div class="party-building-upload-file-content">
-            <upload-file :fileListArr="fileListArr" @downloadList="downloadList"></upload-file>
-          </div>
-        </el-col> -->
       </el-form>
     </el-row>
     <el-row class="text-align-right el-form-footer">
@@ -59,9 +46,7 @@
   </div>
 </template>
 <script>
-// import UploadImg from "./UploadImg.vue";
-// import UploadFile from "./UploadFile.vue";
-// require styles
+
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
