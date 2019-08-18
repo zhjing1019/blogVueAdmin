@@ -53,7 +53,7 @@
       </el-tab-pane>
     </el-tabs>
     <div class="party-jx-dialog">
-      <el-dialog :title="formTitle" :visible.sync="partyJxDialog" :before-close="jxDialogBeforeClose" width="100%">
+      <el-dialog top="20px" :title="formTitle" :visible.sync="partyJxDialog" :before-close="jxDialogBeforeClose" width="100%">
         <quill-edit
           ref="editJx"
           :partyFormData="partyFormData"
@@ -108,23 +108,10 @@ export default {
       partyDialogVisible: false,
       partyFormData: [
         { id: "title", label: "简讯标题", colSpan: 12, type: "input" },
-        { id: "source", label: "简讯来源", colSpan: 12, type: "input" },
-        {
-          id: "isCover",
-          label: "是否添加封面",
-          colSpan: 24,
-          type: "radio-button",
-          defaultVal: "0",
-          list: [{ label: "是", value: "1" }, { label: "否", value: "0" }]
-        }
       ],
       isCarouselShow: false,
       partyFormModel: {
         title: "",
-        source: "",
-        isCover: "0",
-        bannerTitle: "",
-        bannerId: ""
       },  
   
     }
