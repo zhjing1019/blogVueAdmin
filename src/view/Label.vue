@@ -1,7 +1,7 @@
 <template>
     <dir class="label-main">
         <div class="label-add">
-            <el-button type="primary" plain  @click="addLabel">新建标签</el-button>
+            <el-button type="primary" plain  @click="addLabel">新建分类</el-button>
         </div>
         <el-table
         :data="tableData"
@@ -19,6 +19,9 @@
                         type="danger"
                         @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
                     </div>
+                    <div v-if="item.prop == 'labelDetail'">
+                        {{scope.row[item.prop].join(',')}}
+                    </div>
                     
                     <span v-else> {{ scope.row[item.prop] }} </span>
                 </template>
@@ -35,12 +38,27 @@
             >
             <div class="demo-drawer__content">
                 <el-form :model="form">
-                <el-form-item label="标签名称" :label-width="formLabelWidth">
-                    <el-input v-model="form.label" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="访问路径" :label-width="formLabelWidth">
-                    <el-input v-model="form.path" autocomplete="off"></el-input>
-                </el-form-item>
+                    <el-form-item label="分类名称" :label-width="formLabelWidth">
+                        <el-input v-model="form.label" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="访问路径" :label-width="formLabelWidth">
+                        <el-input v-model="form.path" autocomplete="off"></el-input>
+                    </el-form-item>
+                    
+                    <el-form-item
+                        :label-width="formLabelWidth"
+                        v-for="(domain, index) in form.domains"
+                        :label="'标签' + index"
+                        :key="domain.key"
+                        :prop="'domains.' + index + '.value'"
+                    >
+                        <el-input v-model="domain.value" style="width:230px"></el-input>
+                        <el-button @click.prevent="removeDomain(domain)" style="margin-left: 10px">删除</el-button>
+                    </el-form-item>
+                    <div>
+                        <el-button @click.prevent="addDomain()">新增标签</el-button>
+                        
+                    </div>
                 </el-form>
                 <div class="demo-drawer__footer">
                     <el-button @click="dialog = false">取 消</el-button>
@@ -56,7 +74,7 @@
     export default {
       data() {
         return {
-            drawerTitle: "新建标签",
+            drawerTitle: "新建分类",
             dialog: false,
             formLabelWidth: '80px',
             loading: false,
@@ -70,6 +88,10 @@
                     label: "访问路径",
                 },
                 {
+                    prop: "labelDetail",
+                    label: "技术标签",
+                },
+                {
                     prop: "oper",
                     label: "操作",
                 },
@@ -78,30 +100,37 @@
             form: {
                 label: '',
                 path: '',
+                domains: [{
+                    value: ''
+                }],
+ 
             },
             tableData: [{
                 name: '前端',
                 path: '/web',
+                labelDetail: ['vue', 'react', 'webpack'],
                 oper: ''
             }, {
                 name: 'JAVA',
                 path: '/java',
+                labelDetail: ['vue', 'react', 'webpack'],
                 oper: ''
             }, {
                 name: 'python',
                 path: '/python',
+                labelDetail: ['vue', 'react', 'webpack'],
                 oper: ''
             }, {
                 name: '安全',
                 path: '/security',
+                labelDetail: ['vue', 'react', 'webpack'],
                 oper: ''
             }]  
         }
       },
       methods: {
-            handleEdit(index, row) {
-                console.log(index, row);
-                this.drawerTitle = "编辑标签";
+            handleEdit() {
+                this.drawerTitle = "编辑分类";
                 this.dialog = true;
             },
             handleDelete() {
@@ -125,8 +154,20 @@
                 this.dialog = false;
             },
             addLabel() {
-                this.labelTitle = "新建标签";
+                this.labelTitle = "新建分类";
                 this.dialog = true;
+            },
+            removeDomain(item) {
+                var index = this.form.domains.indexOf(item)
+                if (index !== -1) {
+                this.form.domains.splice(index, 1)
+                }
+            },
+            addDomain() {
+                this.form.domains.push({
+                value: '',
+                key: Date.now()
+                });
             }
  
       }
@@ -146,6 +187,8 @@
 .demo-drawer__content{
         position: relative;
         height: 100%;
+        padding: 20px;
+        padding-top: 0;
         .demo-drawer__footer{
             text-align: center;
             position: absolute;

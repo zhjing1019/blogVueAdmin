@@ -2,7 +2,7 @@
 export const label =[
     {
         index: "1",
-        label: "标签管理",
+        label: "分类管理",
         path: "label",
         icon: "el-icon-collection-tag"
     },
