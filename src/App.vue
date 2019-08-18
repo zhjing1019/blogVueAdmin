@@ -1,23 +1,12 @@
 <template>
   <div id="app">
-    <fix-header></fix-header>
-    <el-row class="admin-main">
-        <el-col :span="4" class="">
-          <nav-left></nav-left>
-        </el-col>
-        <el-col :span="20">
-          <router-view></router-view>
-        </el-col>
-      </el-row>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import FixHeader from "@/components/FixHeader.vue";
-import NavLeft from "@/components/NavLeft.vue"
 export default {
   name: 'app',
-  components: {FixHeader, NavLeft}
 }
 </script>
 
@@ -34,9 +23,5 @@ export default {
   color: #2c3e50;
   width: 100vw;
   height: 100vh;
-  .admin-main{
-    height: calc(100vh - 60px);
-    padding-top: 60px;
-  }
 }
 </style>
