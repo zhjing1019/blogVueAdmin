@@ -14,16 +14,6 @@ npm run serve
 ```
 npm run build
 ```
+### 基于vue和element的个人博客后台管理系统
 
-### Run your tests
-```
-npm run test
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -39,6 +39,7 @@ export default {
     },
     methods: {
         btnClick() {
+            this.$router.push({ path: `/index` });
         
         },
 
