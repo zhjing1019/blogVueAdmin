@@ -6,18 +6,14 @@
           <el-col :span="item.colSpan" :key="index">
             <el-form-item :label="item.label">
               <el-input v-if="item.type == 'input'" v-model="form[item.id]"></el-input>
-              <el-radio-group
-                v-if="item.type == 'radio-button'"
-                v-model="form[item.id]"
-                @change="radioChange(form[item.id])"
-                size="small"
-              >
-                <template v-for="(list, i) in item.list">
-                  <el-radio-button :key="i" :label="list.value">
-                    {{ list.label }}
-                  </el-radio-button>
-                </template>
-              </el-radio-group>
+              <el-select v-if="item.type == 'select'" v-model="form[item.id]" placeholder="请选择">
+                <el-option
+                  v-for="y in item.list"
+                  :key="y.value"
+                  :label="y.label"
+                  :value="y.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </template>

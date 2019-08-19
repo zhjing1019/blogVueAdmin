@@ -107,7 +107,13 @@ export default {
       jxdetails: {},
       partyDialogVisible: false,
       partyFormData: [
-        { id: "title", label: "简讯标题", colSpan: 12, type: "input" },
+        { id: "title", label: "文章标题", colSpan: 24, type: "input" },
+        { id: "title", label: "文章分类", colSpan: 12, type: "select", list: [
+          {value: 1, label: '测试1'}
+        ] },
+        { id: "title", label: "文章标签", colSpan: 12, type: "select", list:[
+          {value: 1, label: '测试2'}
+        ] },
       ],
       isCarouselShow: false,
       partyFormModel: {
