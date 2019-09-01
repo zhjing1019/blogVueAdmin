@@ -4,10 +4,10 @@
     <div class="login-main">
         <el-form label-position="left" :model="loginForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
             <el-form-item label="用户名" prop="userName">
-                <el-input v-model="loginForm.userName"></el-input>
+                <el-input v-on:keyup.enter.native="btnClick" v-model="loginForm.userName"  autofocus></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password">
-                <el-input v-model="loginForm.password"  show-password></el-input>
+                <el-input v-on:keyup.enter.native="btnClick" v-model="loginForm.password"  show-password></el-input>
             </el-form-item>
         </el-form>
         <div class="login-btn">
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import axios from "axios";
 
 export default {
     data() {
@@ -38,9 +39,29 @@ export default {
         }
     },
     methods: {
+        // 登陆
         btnClick() {
-            this.$router.push({ path: `/index` });
-        
+            // 
+            let _this = this;
+            this.$refs.ruleForm.validate((valid) => {
+                if (valid) {
+                    axios({
+                        method: 'post',
+                        url: 'account/login',
+                        data: _this.loginForm
+                    }).then(res => {
+                        if(res.data) {
+                            let token = res.data.token;
+                            localStorage.setItem('Authorization', token);
+                            _this.$router.push({ path: `/index` });
+                        }
+                    }).catch(error => {
+                        _this.$message.error(error.msg);
+                    });
+                } else {
+                    return false;
+                }
+            });
         },
 
     }
