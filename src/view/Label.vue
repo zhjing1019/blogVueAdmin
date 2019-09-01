@@ -14,10 +14,10 @@
                         <el-button
                         size="mini"
                         @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-                        <el-button
+                        <!-- <el-button
                         size="mini"
                         type="danger"
-                        @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                        @click="handleDelete(scope.$index, scope.row)">Delete</el-button> -->
                     </div>
                     <div v-if="item.prop == 'tags'">
                         <span v-for="(tag, indexY) in scope.row[item.prop]" :key="indexY">
@@ -100,7 +100,6 @@
                 //     prop: "oper",
                 //     label: "操作",
                 // },
-
             ],
             form: {
                 name: '',
@@ -148,9 +147,12 @@
                 });
                 
             },
-            handleEdit() {
+            handleEdit(index, data) {
                 this.drawerTitle = "编辑分类";
                 this.dialog = true;
+                console.log(index);
+                console.log(data);
+
             },
             handleDelete() {
                 this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {

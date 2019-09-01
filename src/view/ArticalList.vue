@@ -1,6 +1,14 @@
 <template>
   <div class="artical-list">
     <el-button type="primary" plain class="add-artical-btn" @click="articalAdd">新建文章</el-button>
+    <el-select class="artical-type-select" v-model="type" placeholder="请选择文章分类">
+      <el-option
+        v-for="item in typeData"
+        :key="item.name"
+        :label="item.name"
+        :value="item.name">
+      </el-option>
+    </el-select>
  
     <el-tabs v-model="activeName" @tab-click="handleClick" class="artical-tab">
       <el-tab-pane label="已发布文章" name="first">
@@ -19,6 +27,9 @@
                         size="mini"
                         type="danger"
                         @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                    </div>
+                    <div v-else-if="item.prop == 'lastModifyTime'">
+                        {{new Date(scope.row[item.prop])}}
                     </div>
                     
                     <span v-else> {{ scope.row[item.prop] }} </span>
@@ -59,12 +70,13 @@
           :partyFormData="partyFormData"
           :isCarouselShow="isCarouselShow"
           :partyFormModel.sync="partyFormModel"
-          @radioChange="isCarouselChange"
           :partyDialogVisible.sync="partyDialogVisible"
           :partydetails.sync="jxdetails"
           :dialogVis.sync="partyJxDialog"
           @creatAdd="creatAdd"
           @saveDraft="saveDraft"
+          @typeChange="typeChange"
+
         ></quill-edit>
       </el-dialog>
     </div>
@@ -72,11 +84,14 @@
 </template>
 
 <script>
+import axios from "axios";
 import QuillEdit from "@/components/QuillEdit.vue"
 export default {
   components: {QuillEdit},
   data() {
     return {
+      type: "",
+      typeData: [],
       activeName: 'first',
       formTitle: "新建文章",
       partyJxDialog: false,
@@ -86,43 +101,75 @@ export default {
           label: "标题",
         },
         {
-          prop: "date",
+          prop: "lastModifyTime",
           label: "发布日期",
         },
-        {
-          prop: "oper",
-          label: "操作",
-        },
+        // {
+        //   prop: "oper",
+        //   label: "操作",
+        // },
 
       ],
-      tableData: [{
-                title: 'test',
-                date: '2019-10-11',
-                oper: ''
-            }, {
-                title: 'test',
-                date: '2019-10-11',
-                oper: ''
-      }],
+      tableData: [],
       jxdetails: {},
       partyDialogVisible: false,
       partyFormData: [
         { id: "title", label: "文章标题", colSpan: 24, type: "input" },
-        { id: "title", label: "文章分类", colSpan: 12, type: "select", list: [
-          {value: 1, label: '测试1'}
-        ] },
-        { id: "title", label: "文章标签", colSpan: 12, type: "select", list:[
-          {value: 1, label: '测试2'}
-        ] },
+        { id: "brief", label: "文章简介", colSpan: 24, type: "textarea"},
+        { id: "type", label: "文章分类", colSpan: 12, type: "select", list: []},
+        { id: "tags", label: "文章标签", colSpan: 12, multiple: true, type: "select", list:[]},
+
       ],
       isCarouselShow: false,
       partyFormModel: {
         title: "",
+        brief: "",
+        type: "",
+        tags: [],
       },  
   
     }
   },
+  mounted() {
+    this.getType()
+  },
+  watch: {
+    type() {
+      this.getArtical();
+    }
+  },
   methods: {
+    //获取所有分类
+    getType() {
+      let _this = this;
+      axios.get('cms/type')
+        .then(function (res) {
+          console.log(res.data.data)
+            _this.typeData = res.data.data;
+            _this.type = _this.typeData[0].name;
+            _this.partyFormData[2].list = res.data.data
+        })
+        .catch(function (error) {
+          _this.$message.error(error.msg);
+        })
+    },
+    //根据分类获取文章
+    getArtical() {
+      let _this = this;
+      axios.get('/cms/article/' + _this.type)
+        .then(function (res) {
+            _this.tableData = res.data.data;
+        })
+        .catch(function (error) {
+          _this.$message.error(error.msg);
+        })
+    },
+    typeChange(value) {
+      this.typeData.forEach(x => {
+        if(x.name === value) this.partyFormData[3].list = x.tags
+      })
+
+    },
     articalAdd() {
       this.partyJxDialog = true;
     },
@@ -140,34 +187,21 @@ export default {
       }
     },
     creatAdd(data) {
-      // if (!data.title) {
-      //   this.$message.error("请输入简讯标题");
-      //   return;
-      // }
-      // if (this.partyFormModel.isCover == 1) {
-      //   if (!data.cover) {
-      //     this.$message.error("请添加封面");
-      //     return;
-      //   }
-      //   if (!data.coverTitle) {
-      //     this.$message.error("请添加封面标题");
-      //     return;
-      //   }
-      // }
-      // delete data.attaches;
+      let _this = this;
+      axios({
+        method: 'post',
+        url: '/cms/article/edit',
+        data: data
+      }).then(() => {
+        _this.getArtical();
+        _this.partyJxDialog = false;
+      }).catch(error => {
+        _this.$message.error(error.msg);
+      });
       
     },
     saveDraft(data) {
-      // delete data.attaches;
-      // console.log(data);
-      // request("party/news/saveDraft", data).then(result => {
-      //   if (result) {
-      //     this.partyFormModel.id = result;
-      //     this.$message("保存成功");
-      //     this.partyList("news", "listDraft", this.tabIndex, 0);
-      //     this.partyJxDialog = false;
-      //   }
-      // });
+      console.log(data);
     },    
   }
 
@@ -186,6 +220,12 @@ export default {
   }
   .artical-tab{
     margin-top: 20px;
+  }
+  .artical-type-select{
+    position: absolute;
+    right: 130px;
+    margin-top: -10px;
+    z-index: 100;
   }
 }
 </style>

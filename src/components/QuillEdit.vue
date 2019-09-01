@@ -1,17 +1,18 @@
 <template>
   <div class="partyjx-release-form scroll-div">
     <el-row class="party-building-form-main">
-      <el-form :model="form" ref="ruleForm">
+      <el-form :model="form" ref="ruleForm"  label-width="80px">
         <template v-for="(item, index) in partyFormData">
           <el-col :span="item.colSpan" :key="index">
             <el-form-item :label="item.label">
               <el-input v-if="item.type == 'input'" v-model="form[item.id]"></el-input>
-              <el-select v-if="item.type == 'select'" v-model="form[item.id]" placeholder="请选择">
+              <el-input v-if="item.type == 'textarea'" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" v-model="form[item.id]"></el-input>
+              <el-select @change="typeChange(form[item.id])" v-if="item.type == 'select'" v-model="form[item.id]" placeholder="请选择" :multiple="item.multiple ? item.multiple : false">
                 <el-option
                   v-for="y in item.list"
-                  :key="y.value"
-                  :label="y.label"
-                  :value="y.value">
+                  :key="y.name"
+                  :label="y.name"
+                  :value="y.name">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -35,8 +36,8 @@
     </el-row>
     <el-row class="text-align-right el-form-footer">
       <el-button class="red-default-btn" @click="cancel">取消</el-button>
-      <el-button class="red-default-btn" @click="saveDraft">保存到草稿箱</el-button>
-      <el-button class="red-default-btn" @click="seeModel">预览</el-button>
+      <!-- <el-button class="red-default-btn" @click="saveDraft">保存到草稿箱</el-button> -->
+      <!-- <el-button class="red-default-btn" @click="seeModel">预览</el-button> -->
       <el-button type="primary" class="red-btn" @click="creatAdd">立即创建</el-button>
     </el-row>
   </div>
@@ -53,7 +54,6 @@ export default {
     return {
       fileListArr: [],
       content: "",
-      bannerId: this.partyFormModel.bannerId,
       nowHtml: "",
       summary: "",
       fileList: [],
@@ -93,32 +93,26 @@ export default {
   computed: {
     upDataForm() {
       let ids = [];
-      console.log(this.fileList);
       this.fileList.forEach(x => {
         let idDetail = { attach: x.id };
         ids.push(idDetail);
       });
       let data = {
         title: this.form.title,
-        source: this.form.source ? this.form.source : "",
+        brief: this.form.brief,
+        type: this.form.type,
+        tags: this.form.tags,
         content: this.nowHtml,
-        summary: this.summary,
-        cover: this.bannerId,
-        coverTitle: this.form.bannerTitle,
-        attaches: ids
       };
-      if (this.partyFormModel.id) data.id = this.partyFormModel.id;
       return data;
     },
     upDataContent() {
       let data = {
         title: this.form.title,
-        source: this.form.source ? this.form.source : "",
-        publisher: "",
-        date: this.getNowFormatDate(),
-        details: this.nowHtml,
-        bannerTitle: this.form.bannerTitle,
-        bannerId: this.bannerId
+        brief: this.form.brief,
+        type: this.form.type,
+        tags: this.form.tags,
+        content: this.nowHtml,
       };
       if (this.partyFormModel.id) data.id = this.partyFormModel.id;
       return data;
@@ -138,51 +132,24 @@ export default {
       this.dialogVis = val;
     },
 
-    partydetails: {
-      immediate: true,
-      deep: true,
-      handler(val) {
-        if (val.attaches) {
-          let arr = [];
-          val.attaches.forEach(x => {
-            let detail = {
-              name: x.attachName,
-              url: "/api/file/download/" + x.attach
-            };
-            arr.push(detail);
-          });
-          this.fileListArr = arr;
-        } else {
-          this.fileListArr = [];
-        }
-      }
-    },
     partyFormModel: {
       handler(val) {
-        this.bannerId = val.bannerId ? val.bannerId : "";
         this.partyFormModel = val;
       },
       deep: true
     },
-    bannerId(val) {
-      if (!val) {
-        this.form.bannerTitle = 0;
-        this.partyFormModel.bannerTitle = "";
-      }
-      this.bannerId = val;
-      this.partyFormModel.bannerId = val;
-      this.$emit("updata:partyFormModel", this.form);
-    }
+
   },
   methods: {
+    typeChange(value) {
+      this.$emit("typeChange", value)
+    },
     downloadList(list) {
       this.fileList = list;
     },
     resetEditContent() {
       this.content = "";
       this.form = this.partyFormModel;
-      this.bannerId = "";
-      this.form.bannerId = "";
     },
     giveEditContent(content) {
       this.content = content;
@@ -204,13 +171,6 @@ export default {
       this.$emit("update:partydetails", this.upDataContent);
       this.$emit("update:partyDialogVisible", true);
     },
-    radioChange(val) {
-      this.bannerId = "";
-      this.partyFormModel.bannerId = "";
-      this.form.bannerId = "";
-      this.$emit("updata:partyFormModel", this.form);
-      this.$emit("radioChange", val);
-    },
     onEditorBlur(quill) {
       console.log("editor blur!", quill);
     },
@@ -223,8 +183,8 @@ export default {
     onEditorChange({ quill, html, text }) {
       console.log("editor change!", quill, html, text);
       this.nowHtml = html;
-      let summary = text.length > 300 ? text.slice(0, 300) : text;
-      this.summary = summary;
+      // let summary = text.length > 300 ? text.slice(0, 300) : text;
+      // this.summary = summary;
     },
     getNowFormatDate() {
       let date = new Date();
