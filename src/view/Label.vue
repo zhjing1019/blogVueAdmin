@@ -54,6 +54,10 @@
                         :label="'标签' + index"
                         :key="domain.key"
                         :prop="'tags.' + index + '.name'"
+                        :rules="[
+                            { required: true, message: '请输入标签名称', trigger: 'blur' },
+                            { required: true,message: '请输入标签路径', trigger: 'blur' }
+                        ]"
                     >
                         <el-input v-model="domain.name" style="width:230px" placeholder="请输入标签名称"></el-input>
                         <el-input class="tag-dir" v-model="domain.dir" style="width:230px" placeholder="请输入标签路径"></el-input>
@@ -131,21 +135,25 @@
 
             },
             //新增分类标签
-            // $refs.drawer.closeDrawer()
             query() {
                 let _this = this;
-                axios({
-                    method: 'post',
-                    url: 'cms/type',
-                    data: this.form
-                }).then(() => {
-                    _this.getLabel();
-                    _this.$refs.drawer.closeDrawer();
-                    _this.$refs.ruleForm.resetFields();
-                }).catch(error => {
-                    _this.$message.error(error.msg);
+                this.$refs.ruleForm.validate((valid) => {
+                    if (valid) {
+                        axios({
+                            method: 'post',
+                            url: 'cms/type',
+                            data: _this.form
+                        }).then(() => {
+                            _this.getLabel();
+                            _this.$refs.drawer.closeDrawer();
+                            _this.$refs.ruleForm.resetFields();
+                        }).catch(error => {
+                            _this.$message.error(error.msg);
+                        });
+                    } else {
+                        return false;
+                    }
                 });
-                
             },
             handleEdit(index, data) {
                 this.drawerTitle = "编辑分类";
